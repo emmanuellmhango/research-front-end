@@ -1,0 +1,131 @@
+body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .nav {
+    /* margin-top: 5px; */
+    position: fixed;
+    width: 100%;
+  }
+  
+  .nav-wrapper {
+    background-color: rgb(255, 176, 0);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    padding: 0 15px;
+  }
+  
+  .header-book-btn-space {
+    margin-top: 20px;
+  }
+  
+  .humburger {
+    display: block;
+  }
+  
+  .nav-pop {
+    color: #fff;
+    font-weight: bold;
+    font-size: 2.5rem;
+    cursor: pointer;
+  }
+  
+  .nav-search {
+    background-color: #fff;
+    border-radius: 25px;
+    height: 40px;
+    width: 200px;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    padding-right: 10px;
+  }
+  
+  .nav-search-icon {
+    color: rgb(255, 176, 0);
+    font-size: 1.2rem;
+  }
+  
+  .header {
+    background-size: 700px 553px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgb(255, 176, 0);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .header-title {
+    color: #fff;
+    font-size: 4rem;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .nav-item {
+    cursor: pointer;
+  }
+  
+  .nav-item:hover {
+    font-weight: bold;
+  }
+  
+  .header-book-btn {
+    background-color: rgb(140, 192, 38);
+    border-radius: 25px;
+    padding: 15px;
+    color: #fff;
+    font-weight: bold;
+    width: 100px;
+    cursor: pointer;
+  }
+  
+  .header-book-btn-signup {
+    color: rgb(140, 192, 38);
+    border-radius: 25px;
+    padding: 15px;
+    background-color: #fff;
+    font-weight: bold;
+    width: 100px;
+    cursor: pointer;
+  }
+  
+  .header-book-btn:hover,
+  .header-book-btn-signup:hover {
+    padding: 20px;
+  }
+  
+  .nav-pop-active {
+    color: rgb(255, 176, 0);
+    height: 100vh;
+    width: 150px;
+    border-right: #c7c5c5 1px solid;
+  }
+  
+  .nav-list {
+    padding: 0;
+    margin: 0;
+    color: #fff;
+    list-style-type: none;
+    width: 100%;
+    background-color: aqua;
+  }
+  
+  li {
+    float: left;
+    padding-right: 20px;
+  }
+  
+  li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 16px;
+    text-decoration: none;
+  }
