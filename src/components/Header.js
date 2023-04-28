@@ -19,12 +19,15 @@ const Header = ({isLoggedIn, handleLogout}) => (
             </li>
             {!isLoggedIn ? (
               <li className="nav-item">
-                <NavLink to="/login" className="link">My Account</NavLink>
+                <NavLink to="/login" className="link">Account</NavLink>
               </li>
             ) : (
               <>
                 <li className="nav-item">
                     <NavLink to="/dashboard" className="link">My Dashboard</NavLink>
+                </li>
+                <li className="nav-item">
+                    <NavLink to="/applications" className="link">My Applications</NavLink>
                 </li>
                 <li className="nav-item">
                     <NavLink to="/" onClick={handleLogout} className="link">Signout</NavLink>

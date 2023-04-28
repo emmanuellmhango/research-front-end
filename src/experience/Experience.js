@@ -17,7 +17,7 @@ const Experience = ({experience, user}) => {
             {experience && experience.length > 0 && (
                 experience.map((experience, index) => (
                    <>
-                    <tr key={index} className="data-first-row">
+                    <tr key={index + 1} className="data-first-row">
                         <td>
                             <div className="data-width-counter">
                                 <div className="data-counter">

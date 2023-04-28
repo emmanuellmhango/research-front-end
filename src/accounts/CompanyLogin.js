@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import './style.css';
 
-function Login({onLogin}) {
+function CompanyLogin({onLogin}) {
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,17 +20,22 @@ function Login({onLogin}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = { email, password };
-    try {
-      const response = await axios.get('http://localhost:3000/api/v1/users', {
-        params: data 
+    await axios.get('http://localhost:3000/api/v1/companies', {
+        params: data,
+      })
+      .then((response) => {
+          if(response.data.success === true) {
+            dispatch({ type: 'SUCCESS_COMP_LOG', payload: response.data.company });
+            onLogin();
+            alert('Login successful');
+            navigate('/company-dashboard');
+          } else {
+            alert('Wrong login credentials, please try again')
+          }
+        })
+      .catch((error) => {
+         alert('Seems there is a network error, please try again');
       });
-      dispatch({ type: 'LOGIN_SUCCESS', payload: response.data.user });
-      onLogin();
-      alert('You have successfully logged in')
-      navigate('/dashboard');
-    } catch (error) {
-      alert(`There was an error logging in, please try again!${error}`);
-    }
   };
 
   return (
@@ -45,7 +50,7 @@ function Login({onLogin}) {
 
       <div className='signup-container'>
         <div className='signup-form'>
-          <h1> Login </h1>
+          <h1> Login as Hiring Manager</h1>
           <form onSubmit={handleSubmit}>
             <div className='form-group'>
               <input
@@ -75,10 +80,10 @@ function Login({onLogin}) {
           </form>
         </div>
         <br />
-        <NavLink to='/signup'>You dont have an account? Create Account Now!</NavLink>
+        <NavLink to='/signup-as'>You dont have an account? <span className="big-up">Create Account Now!</span></NavLink>
       </div>
     </div>
   );
 }
 
-export default Login;
+export default CompanyLogin;

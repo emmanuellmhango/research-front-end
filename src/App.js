@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
-import Login from './accounts/Login'
-import Jobs from './jobs/Jobs';
+import CandidateLogin from './accounts/CandidateLogin'
+import Jobs from './jobs/AllJobs';
 import Signup from './accounts/Signup';
-import Dashboard from './dashboard/Dashboard';
+import CandidateDashboard from './dashboard/CandidateDashboard';
 import BiodataForm from './biodata/BiodataForm';
 import EducationForm from './education/EducationForm';
 import ExperienceForm from './experience/ExperienceForm';
+import ProfileForm from './userprofile/ProfileForm';
+import Choice from './accounts/Choice';
+import CompanySignup from './accounts/CompanySignup';
+import CompanyLogin from './accounts/CompanyLogin';
+import LoginChoice from './accounts/LoginChoice';
+import CompanyDashboard from './company/CompanyDashboard';
+import JobForm from './company/JobForm';
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -24,12 +32,19 @@ function App() {
       <Header isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
         <Routes>
           <Route path='/' element={<Jobs /> } />
-          <Route path='/login' element={<Login onLogin={handleLogin}/>} />
+          <Route path='/login' element={<LoginChoice />} />
+          <Route path='/candidate-login' element={<CandidateLogin onLogin={handleLogin} />} />
+          <Route path='/company-login' element={<CompanyLogin onLogin={handleLogin} />} />
           <Route path='/signup' element={<Signup />} />
-          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/dashboard' element={<CandidateDashboard />} />
           <Route path='/editbiodata' element={<BiodataForm />} />
           <Route path='/education' element={<EducationForm />} />
           <Route path='/experience' element={<ExperienceForm />} />
+          <Route path='/profile' element={<ProfileForm />} />
+          <Route path='/signup-as' element={<Choice />} />
+          <Route path='/company-signup' element={<CompanySignup />} />
+          <Route path='/company-dashboard' element={<CompanyDashboard />} />
+          <Route path='/add-job' element={<JobForm />} />
         </Routes>
     </div>
   );

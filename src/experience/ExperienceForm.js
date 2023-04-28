@@ -48,7 +48,7 @@ const ExperienceForm = (props) => {
             <h2>Edit User Details</h2>
             <form id="form-edt" onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="edit-biodata-name">Qualification</label> <br />
+                    <label htmlFor="edit-biodata-name">Position</label> <br />
                     <input type="text" onChange={handleInputChange} id="edit-position" name="position" className="form-control-l" required  placeholder="Position" />
                 </div>
                 <div className="form-group">
