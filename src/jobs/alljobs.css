@@ -1,0 +1,22 @@
+.data-first-row-all {
+    background-color: rgb(238, 238, 236);
+    margin-bottom: 5px;
+    border-radius: 4px;
+}
+
+.job-table {
+    width: 98%;
+    margin: 0 auto;
+}
+
+.cur-title {
+    text-align: left;
+}
+
+.top-up {
+    margin-top: -5px;
+}
+
+.job-link {
+    text-decoration: none;
+}

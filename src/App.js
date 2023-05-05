@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
 import Header from './components/Header';
 import CandidateLogin from './accounts/CandidateLogin'
-import Jobs from './jobs/AllJobs';
+import AllJobs from './jobs/AllJobs';
 import Signup from './accounts/Signup';
 import CandidateDashboard from './dashboard/CandidateDashboard';
 import BiodataForm from './biodata/BiodataForm';
@@ -15,12 +16,14 @@ import CompanyLogin from './accounts/CompanyLogin';
 import LoginChoice from './accounts/LoginChoice';
 import CompanyDashboard from './company/CompanyDashboard';
 import JobForm from './company/JobForm';
+import SingleJob from './jobs/SingleJob';
 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = () => {
+    // user.id !== null ? 
     setIsLoggedIn(true);
   };
   const handleLogout = () => {
@@ -31,7 +34,7 @@ function App() {
     <div className='App'>
       <Header isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
         <Routes>
-          <Route path='/' element={<Jobs /> } />
+          <Route path='/' element={<AllJobs /> } />
           <Route path='/login' element={<LoginChoice />} />
           <Route path='/candidate-login' element={<CandidateLogin onLogin={handleLogin} />} />
           <Route path='/company-login' element={<CompanyLogin onLogin={handleLogin} />} />
@@ -45,6 +48,7 @@ function App() {
           <Route path='/company-signup' element={<CompanySignup />} />
           <Route path='/company-dashboard' element={<CompanyDashboard />} />
           <Route path='/add-job' element={<JobForm />} />
+          <Route path='/view-job' element={<SingleJob onLogin={handleLogin} />} />
         </Routes>
     </div>
   );

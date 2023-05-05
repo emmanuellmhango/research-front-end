@@ -8,6 +8,7 @@ import profileSlice from '../userprofile/profileSlice';
 import companySlice from '../company/companySlice';
 import jobSlice from '../company/jobSlice';
 import allJobsSlice from '../jobs/allJobsSlice';
+import singleJobSlice from '../jobs/singlejobSlice';
 
 export default configureStore({
   reducer: {
@@ -20,5 +21,6 @@ export default configureStore({
     company: companySlice,
     jobs: jobSlice,
     allJobs: allJobsSlice,
+    singleJob: singleJobSlice,
   },
 });
