@@ -5,7 +5,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 const biodataSlice = createSlice({
     name: 'biodata',
     initialState: [],
-    reducers: {},
+    reducers: {
+      logout: (state) => {
+        return [];
+      },
+    },
     extraReducers: (builder) => {
       builder
         .addCase(fetchBiodata.fulfilled, (state, action) => {

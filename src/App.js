@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Header from './components/Header';
 import CandidateLogin from './accounts/CandidateLogin'
 import AllJobs from './jobs/AllJobs';
@@ -17,16 +17,19 @@ import LoginChoice from './accounts/LoginChoice';
 import CompanyDashboard from './company/CompanyDashboard';
 import JobForm from './company/JobForm';
 import SingleJob from './jobs/SingleJob';
+import biodataSlice from './accounts/userBiodataSlice';
 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const dispatch = useDispatch();
   const handleLogin = () => {
     // user.id !== null ? 
     setIsLoggedIn(true);
   };
   const handleLogout = () => {
+    dispatch({type: 'LOGOUT', payload: null});
+    dispatch(biodataSlice.actions.logout());
     setIsLoggedIn(false);
   };
 

@@ -25,14 +25,25 @@ function SingleJob() {
 
     const handleApply = (e) => {
         e.preventDefault();
-        if(user.id !== undefined || user.id !== null){
-            alert('You have successfully applied to this post');
-            navigate('/');
-        } else {
-            alert('Login first to proceed...');
-            navigate('/candidate-login');
+        try {
+          if (user.id !== undefined && user.id !== null) {
+            const data = {user_id: user.id, job_id: jobID};
+            axios.post('http://localhost:3000/api/v1/applications', data)
+            .get(() => {
+                alert('You have successfully applied to this post');
+                navigate('/');
+            })
+            .catch(() => {
+                alert('Error sending the application, Please try again!!');
+              });
+          } else {
+            throw new Error('User ID is null or undefined');
+          }
+        } catch (error) {
+          alert('Login first to proceed...');
+          navigate('/candidate-login');
         }
-    };
+      };      
 
     return (
         <>
@@ -53,10 +64,7 @@ function SingleJob() {
                             <h4>Required Skills:</h4>
                             <p className="top-up">
                                 <span> 
-                                {job.needed_skills.split(',').map((skill, index) => {
-                                            return (<span key={index} className="skill">{skill}</span>);
-                                        }
-                                    )}
+                                {job.needed_skills}
                                 </span>
                             </p>
                             <h4>Description</h4> 
