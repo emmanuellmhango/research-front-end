@@ -1,0 +1,21 @@
+.apps-table {
+    width: 100%;
+    text-align: left;
+}
+
+.span-2 {
+    width: 60%;
+}
+
+.span-1 {
+    width: 20%;
+}
+
+.tr-low {
+    border-bottom: 1px solid rgb(255, 176, 0);
+}
+
+.data-row {
+    padding-top: 5px;
+}
+

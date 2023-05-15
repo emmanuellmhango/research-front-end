@@ -23,24 +23,21 @@ function SingleJob() {
         fetchJob();  
     }, []);
 
-    const handleApply = (e) => {
+    const handleApply = async (e) => {
         e.preventDefault();
         try {
-          if (user.id !== undefined && user.id !== null) {
-            const data = {user_id: user.id, job_id: jobID};
-            axios.post('http://localhost:3000/api/v1/applications', data)
-            .get(() => {
-                alert('You have successfully applied to this post');
-                navigate('/');
-            })
-            .catch(() => {
-                alert('Error sending the application, Please try again!!');
-              });
-          } else {
-            throw new Error('User ID is null or undefined');
-          }
+            if(user.id !== undefined && user.id !== null){
+                const data = {user_id: user.id, job_id: jobID};
+                const result = await axios.post('http://localhost:3000/api/v1/jobapplications', data);
+                if(result.data !== null) {
+                    alert('You have successfully applied to this post');
+                    navigate('/');
+                } else {
+                    alert('Error sending the application, Please try again!!');
+                }
+            }
         } catch (error) {
-          alert('Login first to proceed...');
+          alert(`Login first to proceed...${error.message}`);
           navigate('/candidate-login');
         }
       };      

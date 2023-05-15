@@ -9,6 +9,7 @@ import companySlice from '../company/companySlice';
 import jobSlice from '../company/jobSlice';
 import allJobsSlice from '../jobs/allJobsSlice';
 import singleJobSlice from '../jobs/singlejobSlice';
+import MyJobApplicationsSLice from '../userprofile/jobapplicationSlice';
 
 export default configureStore({
   reducer: {
@@ -22,5 +23,6 @@ export default configureStore({
     jobs: jobSlice,
     allJobs: allJobsSlice,
     singleJob: singleJobSlice,
+    applications: MyJobApplicationsSLice,
   },
 });

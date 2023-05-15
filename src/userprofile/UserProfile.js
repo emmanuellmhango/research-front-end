@@ -31,7 +31,6 @@ const UserProfile = ({profile, skills, user}) => {
             newElement.className = 'skill';
             newElement.textContent = formData.skname;
             myDivRef.current.appendChild(newElement);
-
           })
           .catch(() => {
             alert(`Error saving data, Please try again!!`);

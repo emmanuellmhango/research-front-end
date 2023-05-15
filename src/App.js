@@ -18,6 +18,7 @@ import CompanyDashboard from './company/CompanyDashboard';
 import JobForm from './company/JobForm';
 import SingleJob from './jobs/SingleJob';
 import biodataSlice from './accounts/userBiodataSlice';
+import JobApplications from './userprofile/JobApplications';
 
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
           <Route path='/company-dashboard' element={<CompanyDashboard />} />
           <Route path='/add-job' element={<JobForm />} />
           <Route path='/view-job' element={<SingleJob onLogin={handleLogin} />} />
+          <Route path='/applications' element={<JobApplications />} />
         </Routes>
     </div>
   );
