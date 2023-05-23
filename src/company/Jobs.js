@@ -6,7 +6,6 @@ import './jobs.css'
 
 const Jobs = ({company, jobs}) => {
     const [applicantsCount, setApplicantsCount] = useState({});
-    const [showDialog, setShowDialog] = useState(false);
     const [showApplicants, setShowApplicants] = useState({});
     const [selectedJobId, setSelectedJobId] = useState(null);
 
@@ -44,21 +43,81 @@ const Jobs = ({company, jobs}) => {
         }
     };
 
+    const shortlistedCandidatesPerJob = [];
+    const fetchApplicantsPerJob = async (id) => {
+        await axios
+          .get(`http://localhost:3000/api/v1/jobscreenings/${id}/show_applicants_per_job`)
+          .then((response) => {
+            // shortlistedCandidatesPerJob.push({ jobId: response.data });
+            console.log({ jobId: response.data });
+          })
+          .catch((error) => {
+            console.log(`Error fetching shortlisted candidates: ${error}`);
+        });
+    };
+
     useEffect(() => {
         jobs.jobs.forEach((job) => {
           fetchJobApplicants(job.id);
           fetchAllpplicants(job.id);
+          fetchApplicantsPerJob(job.id);
         });
     }, [jobs]);
 
+
     const openDialog = (jobId) => {
         setSelectedJobId(jobId);
-        setShowDialog(true);
-      };
+    };
     
-      const closeDialog = () => {
+    const closeDialog = () => {
         setSelectedJobId(null);
-        setShowDialog(false);
+    };
+
+    const candidateMatch = (applicantSkills, neededJobSkills) => {
+        // prepare the skills and put them in the arrays
+        // the candidate skills and the job required skills
+        const neededJobSkillsArray = neededJobSkills.split(",").map((skill) => skill.trim());
+        const applicantSkillsArray = applicantSkills.split(",").map((skill) => skill.trim());
+
+        // check how many candidate skills match the job required skills
+        const commonSkills = neededJobSkillsArray.filter((skill) => applicantSkillsArray.includes(skill));
+
+        // calculate matching percentage
+        const matchPercentage = (commonSkills.length / neededJobSkillsArray.length) * 100;
+        // return the percentage of the match
+        return matchPercentage.toFixed(2);
+    };
+
+    const shortlistCandidate = async (e, candidateID, jobID, name, email, position, company) => {
+        e.preventDefault();
+        const data = {result: 'shortlisted', user_id: candidateID, job_id: jobID};
+        await axios.post('http://localhost:3000/api/v1/jobscreenings', data)
+        .then(() => {
+            sendWelcomeEmail(name, email, position, company, jobID, candidateID);
+        })
+        .catch(() => {
+            alert('Error shortlisting candidate, please try again later');
+        });
+    }
+
+    const sendWelcomeEmail = async (name, email, position, company, jobID, candidateID) => {
+        try {
+          const dataSave = {name: name, email: email, position: position, interview_conducted: 0, job_id: jobID, user_id: candidateID};
+          const data = {name, email, position, company};
+          const response = await axios.post('http://localhost:3000/api/v1/send_interview_invitation', data);
+          if(response.status === 200) {
+            const saveInviteData = await axios.post('http://localhost:3000/api/v1/save_email_invitations', dataSave);
+            if(saveInviteData.statusText === 'Created') {
+                alert(`Candidate shortlisted. an email has been sent to the candidate ${saveInviteData.data.status}`);
+                navigate('/company-dashboard');
+            } else {
+                alert('Error shortlisting candidate, please try again later');
+                navigate('/company-dashboard');
+            }
+          }
+        } catch (error) {
+           alert('Error shortlisting candidate, please try again later');
+        }
       };
       
     return (
@@ -93,42 +152,15 @@ const Jobs = ({company, jobs}) => {
                                     ))}
                                 </div>
                                 <div className="data-stats">
-                                    <div className="data-applicants">
-                                        <h3 className="user-skills-header">Applicants</h3>
-                                        <button
-                                            onClick={() => openDialog(job.id)}
-                                            className='form-control-btn applicants'
-                                        >
-                                            {applicantsCount[job.id] !== undefined ? applicantsCount[job.id] : "...loading"}
-                                        </button>
-                                        <div>
-                                            <Modal show={showDialog} onHide={closeDialog} className="modal-overlay">
-                                                <Modal.Header closeButton>
-                                                    <Modal.Title>Applicants</Modal.Title>
-                                                </Modal.Header>
-                                                <Modal.Body className="test">
-                                                    <table className="table-applicants">
-                                                        <tbody>
-                                                            {showApplicants[job.id] !== undefined && Array.isArray(showApplicants[job.id])
-                                                                ? showApplicants[job.id].map((applicant, i) => (
-                                                                        <tr key={i} className="applicant">
-                                                                            <td className="applicant-name">{applicant.name}</td>
-                                                                            <td className="applicant-email">{applicant.email}</td>
-                                                                            <td className="applicant-phone">{applicant.phone}</td>
-                                                                            <td className="applicant-skills">{applicant.skills}</td>
-                                                                        </tr>
-                                                                    ))
-                                                                    : <tr><td colSpan="4">"Loading..."</td></tr>
-                                                            } 
-                                                        </tbody>
-                                                    </table>                                                   
-                                                </Modal.Body>
-                                                <Modal.Footer>
-                                                    <Button onClick={closeDialog} className="form-control-btn">Close</Button>
-                                                </Modal.Footer>
-                                            </Modal>
-                                        </div>
-                                    </div>
+                                <div className="data-applicants">
+                                    <h3 className="user-skills-header">Applicants</h3>
+                                    <button
+                                        onClick={() => openDialog(job.id)}
+                                        className='form-control-btn applicants'
+                                    >
+                                        {applicantsCount[job.id] !== undefined ? applicantsCount[job.id] : "...loading"}
+                                    </button>
+                                </div>
                                     <div className="data-applicants">
                                         <h3 className="user-skills-header">Interviewed</h3>
                                         <span>120</span>
@@ -148,10 +180,84 @@ const Jobs = ({company, jobs}) => {
                     <tr key={index + 200} ><td>&nbsp;</td></tr>
                    </>
                 ))
-            )}                    
+            )} 
+          <Modal show={selectedJobId !== null} onHide={closeDialog} className="modal-overlay">
+            <Modal.Header >
+                <Modal.Title>
+                    {selectedJobId !== null && selectedJobId !== undefined ? (
+                        <>
+                        <h2>{jobs.jobs[selectedJobId - 1].position} Position</h2>
+                        <h3>Applicants</h3>
+                        </>
+                    ) : ''}                
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="test">
+            {selectedJobId !== null && showApplicants[selectedJobId] !== undefined && (
+                <table className="table-applicants">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Skills</th>
+                        <th>Matching</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Array.isArray(showApplicants[selectedJobId]) ? (
+                    showApplicants[selectedJobId].map((applicant, i) => (
+                        <tr key={i} className="applicant">
+                            <td className="applicant-number">{i +1}</td>
+                            <td className="applicant-name">{applicant.name}</td>
+                            <td className="applicant-name">{applicant.email}</td>
+                            <td className="applicant-phone">{applicant.phone}</td>
+                            <td className="applicant-skills">{applicant.skills}</td>
+                            <td className="applicant-phone">
+                                {candidateMatch(applicant.skills, jobs.jobs[selectedJobId - 1].needed_skills)}%
+                            </td>
+                            <td className="applicant-actions">
+                                {shortlistedCandidatesPerJob.includes(applicant.id) ? (
+                                    <button className="form-control-btn applicants" disabled>Shortlisted</button>
+                                ) : (
+                                    <button
+                                    className="form-control-btn applicants"
+                                    onClick={
+                                        (event) => shortlistCandidate(
+                                            event, 
+                                            applicant.id,
+                                            selectedJobId,
+                                            applicant.name,
+                                            applicant.email,
+                                            jobs.jobs[selectedJobId].position,
+                                            company.name
+                                    )}
+                                    >
+                                        Shortlist
+                                    </button>
+                                )}
+                                <button className="form-control-btn reject">Reject</button>
+                            </td>
+                        </tr>
+                        ))
+                        ) : (
+                        <tr>
+                            <td colSpan="4">"Loading..."</td>
+                        </tr>
+                        )}
+                </tbody>
+                </table>
+            )}
+            </Modal.Body>
+            <Modal.Footer>
+                <br />
+                <Button onClick={closeDialog} className="form-control-btn reject">X</Button>
+            </Modal.Footer>
+        </Modal>                     
         </tbody>
         </table>
-
     </div>
     );
 };

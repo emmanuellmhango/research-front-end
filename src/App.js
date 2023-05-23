@@ -19,7 +19,7 @@ import JobForm from './company/JobForm';
 import SingleJob from './jobs/SingleJob';
 import biodataSlice from './accounts/userBiodataSlice';
 import JobApplications from './userprofile/JobApplications';
-
+import Interviews from './interviews/Interviews';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -54,6 +54,7 @@ function App() {
           <Route path='/add-job' element={<JobForm />} />
           <Route path='/view-job' element={<SingleJob onLogin={handleLogin} />} />
           <Route path='/applications' element={<JobApplications />} />
+          <Route path='/interview' element={<Interviews />} />
         </Routes>
     </div>
   );

@@ -1,6 +1,11 @@
 .applicants {
-    width: 50px;
+    width: 100px;
     background-color: green;
+}
+
+.reject {
+    width: 100px;
+    background-color: red;
 }
 
 .modal-overlay {
@@ -21,6 +26,28 @@
     background-color: #fff; /* Set the desired background color for the modal content */
     padding: 20px;
     z-index: 10000; /* Adjust the z-index value to ensure the modal content is on top of the overlay */
+}
+
+.table-applicants {
+    width: 900px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.applicant-number {
+    width: 40px;
+}
+
+.applicant-name {
+    width: 250px;
+}
+
+.applicant-phone {
+    width: 150px;
+}
+
+.applicant-skills {
+    width: 250px;
 }
 
   
