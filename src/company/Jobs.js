@@ -15,6 +15,11 @@ const Jobs = ({company, jobs}) => {
         navigate('/add-job', {state: { company: company}});
     };
 
+    const addQuestions = (e, id, position) => {
+        e.preventDefault();
+        navigate('/add-questions', {state: { id: id, position: position}});
+    };
+
     const fetchJobApplicants = async (jobId) => {
         try {
           const response = await axios.get(
@@ -108,7 +113,7 @@ const Jobs = ({company, jobs}) => {
           if(response.status === 200) {
             const saveInviteData = await axios.post('http://localhost:3000/api/v1/save_email_invitations', dataSave);
             if(saveInviteData.statusText === 'Created') {
-                alert(`Candidate shortlisted. an email has been sent to the candidate ${saveInviteData.data.status}`);
+                alert('Candidate shortlisted. an email has been sent to the candidate');
                 navigate('/company-dashboard');
             } else {
                 alert('Error shortlisting candidate, please try again later');
@@ -172,6 +177,15 @@ const Jobs = ({company, jobs}) => {
                                     <div className="data-applicants">
                                         <h3 className="user-skills-header">Rejected</h3>
                                         <span>100</span>
+                                    </div>
+                                    <div className="data-applicants bottom">
+                                        <h3 className="user-skills-header">Questions</h3>
+                                        <button 
+                                            className='form-control-btn applicants center make-big'
+                                            onClick={ (event) => addQuestions(event, job.id, job.position) } 
+                                        >
+                                            Add Questions
+                                        </button>
                                     </div>
                                 </div>
                             </div>

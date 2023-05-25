@@ -16,6 +16,12 @@ const initialState = {
           ...state,
           company: null,
           error: action.payload,
+      };
+      case 'COMP_LOGOUT':
+        return {
+          ...state,
+          company: null,
+          error: action.payload,
         };
       default:
         return state;

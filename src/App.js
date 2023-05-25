@@ -20,6 +20,9 @@ import SingleJob from './jobs/SingleJob';
 import biodataSlice from './accounts/userBiodataSlice';
 import JobApplications from './userprofile/JobApplications';
 import Interviews from './interviews/Interviews';
+import InterviewStart from './interviews/InterviewStart';
+import Questions from './interviews/Questions';
+import AddQuestions from './interviews/AddQuestions';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,13 +33,14 @@ function App() {
   };
   const handleLogout = () => {
     dispatch({type: 'LOGOUT', payload: null});
+    dispatch({type: 'COMP_LOGOUT', payload: null});
     dispatch(biodataSlice.actions.logout());
     setIsLoggedIn(false);
   };
 
   return (
     <div className='App'>
-      <Header isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+      <Header handleLogout={handleLogout} />
         <Routes>
           <Route path='/' element={<AllJobs /> } />
           <Route path='/login' element={<LoginChoice />} />
@@ -55,6 +59,9 @@ function App() {
           <Route path='/view-job' element={<SingleJob onLogin={handleLogin} />} />
           <Route path='/applications' element={<JobApplications />} />
           <Route path='/interview' element={<Interviews />} />
+          <Route path='/interview-start' element={<InterviewStart />} />
+          <Route path='/interview-questions' element={<Questions />} />
+          <Route path='/add-questions' element={<AddQuestions />} />
         </Routes>
     </div>
   );

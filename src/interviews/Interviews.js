@@ -14,13 +14,13 @@ function Interviews() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await axios.get('http://localhost:3000/api/v1/users', email)
+    await axios.get('http://localhost:3000/api/v1/users_interview', email)
       .then((response) => {
-          if(response.data.success === true) {
-            alert('Login successful');
-            navigate('/dashboard');
+          if(response.status === 200) {
+            alert('User Verified');
+            navigate('/interview-start');
           } else {
-            alert('Wrong login credentials, please try again')
+            alert('Email could not be verified, please try again')
           }
         })
       .catch((error) => {

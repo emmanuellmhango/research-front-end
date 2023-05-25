@@ -11,6 +11,7 @@ import allJobsSlice from '../jobs/allJobsSlice';
 import singleJobSlice from '../jobs/singlejobSlice';
 import MyJobApplicationsSLice from '../userprofile/jobapplicationSlice';
 import jobApplicantsSlice from '../company/jobApplicantsSlice';
+import interviewQuestionsSlice from '../interviews/interviewQuestionsSLice';
 
 export default configureStore({
   reducer: {
@@ -26,5 +27,6 @@ export default configureStore({
     singleJob: singleJobSlice,
     applications: MyJobApplicationsSLice,
     jobApplicants: jobApplicantsSlice,
+    questions: interviewQuestionsSlice,
   },
 });
