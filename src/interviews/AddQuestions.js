@@ -19,7 +19,7 @@ const AddQuestions = () => {
     const fetchQuestions = async () => {
         await axios.get('http://localhost:3000/api/v1/save_questions', {params: {job_id: id}})
         .then((response) => {
-           dispatch({type: 'QUESTIONS_SUCCESS', payload: response.data});
+           dispatch({type: 'QUESTIONS_SUCCESS', payload: response.data.save_questions});
         })
         .catch((error) => {
            dispatch({type: 'QUESTIONS_ERROR', payload: error});

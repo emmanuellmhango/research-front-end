@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import './JobApplications.css'
 
 const JobApplications = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const user = useSelector((state) => state.user.user);
     const applications = useSelector((state) => state.applications.applications);
     const [jobStatuses, setJobStatuses] = useState({});
+
+    const attendInterview = (e, id) => {
+        e.preventDefault();
+        navigate('/interview', {state: { applicantEmail: user.email, job_id: id}});
+    };
     
     const fetchJobApplications = async () => {
         await axios.get(`http://localhost:3000/api/v1/users/${user.id}/jobapplications`)
@@ -22,7 +29,7 @@ const JobApplications = () => {
 
     const fetchJobStatus = async (id) => {
         try {
-            const response = await axios.get('http://localhost:3000/api/v1/save_email_invitations');
+            const response = await axios.get('http://localhost:3000/api/v1/save_email_invitations', { params: { job_id: id } });
             if (response.data.success === true) {
                 setJobStatuses(prevState => ({ ...prevState, [id]: 'Shortlisted' }));
             } else {
@@ -49,7 +56,7 @@ const JobApplications = () => {
 
     useEffect(() => {
         applications.forEach((job) => {
-            fetchJobStatus(job.id);
+            fetchJobStatus(job.job_id);
         });
     }, [applications]);
 
@@ -87,11 +94,17 @@ const JobApplications = () => {
                                     {AppDate(job.created_at)}
                                 </td>
                                 <td className="action">
-                                    {jobStatus(job.id)}
+                                    {jobStatus(job.job_id)}
                                 </td>
+                                {jobStatus(job.job_id) === 'Shortlisted' ? (
                                 <td className="action">
-                                    <button className="form-control-btn">View</button>
+                                    <button className="form-control-btn green" onClick={(event) => {attendInterview(event, job.job_id)}}>Do Interview</button>
                                 </td>
+                                ) : (
+                                <td className="action">
+                                    <button className="form-control-btn">Waiting...</button>
+                                </td>                                    
+                                )}
                             </tr>
                         ))}
                     </tbody>
