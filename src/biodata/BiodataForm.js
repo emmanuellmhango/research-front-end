@@ -12,8 +12,7 @@ const BiodataForm = (props) => {
     const user = location.state.user;
     const biodata = location.state.biodata;
     const name = `${user.first_name} ${user.last_name}`;
-    console.log(biodata);
-    console.log(user);
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setFormData({ ...formData, [name]: value });
@@ -66,11 +65,11 @@ const BiodataForm = (props) => {
                 </div>
                 <div className="form-group">
                     <label htmlFor="edit-biodata-address">Address</label><br />
-                    <input type="text" onChange={handleInputChange} id="edit-biodata-address"  name="address" className="form-control-l" placeholder={ biodata.address } />
+                    <input type="text" onChange={handleInputChange} id="edit-biodata-address"  name="address" className="form-control-l" placeholder={biodata ? biodata.address : ''} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="edit-biodata-city">Location</label><br />
-                    <input type="text" onChange={handleInputChange} id="edit-biodata-city" name="location" className="form-control-l" placeholder={ biodata.location } />
+                    <input type="text" onChange={handleInputChange} id="edit-biodata-city" name="location" className="form-control-l" placeholder={biodata ? biodata.location : '' } />
                 </div>
                 <div className="form-group">
                     <input type="submit" value="Save Details" className="form-control-btn" />

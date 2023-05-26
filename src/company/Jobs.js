@@ -245,7 +245,7 @@ const Jobs = ({company, jobs}) => {
                                             selectedJobId,
                                             applicant.name,
                                             applicant.email,
-                                            jobs.jobs[selectedJobId].position,
+                                            jobs.jobs[selectedJobId - 1].position,
                                             company.name
                                     )}
                                     >
