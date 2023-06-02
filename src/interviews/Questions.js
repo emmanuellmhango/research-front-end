@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import * as faceapi from 'face-api.js';
@@ -10,6 +10,7 @@ const Questions = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const job_id = location.state.job_id;
   const questions = useSelector((state) => state.jobQuestions.jobQuestions);
   const user = useSelector((state) => state.user.user);
@@ -42,20 +43,30 @@ const Questions = () => {
   const showNextElement = async() => {
     stopVideo();
     if (recordedChunks.length > 0) {
+      SpeechRecognition.stopListening();
       let recordedBlob = new Blob(recordedChunks, { type: recordedChunks[0].type });
       setRecordedChunks([]);
       const express = expressions.join(", ");
+      const audioText = transcript.split(' ').join(',');
       const saveExpressions = await axios.post("http://localhost:3000/api/v1/save_expressions", {
         expressions: express,
         video_feed: recordedBlob,
+        voice_text: audioText,
         job_id: job_id,
         user_id: user.id
       });
       
       if (saveExpressions.statusText === 'Created') {
-        alert("Question submitted, please wait for the next question");
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % questions.length);
-        setExpressions([]);
+        if (currentIndex + 1 === questions.length) {
+          stopVideo();
+          SpeechRecognition.stopListening();
+          alert("You have completed the interview. You will hear from us soon. Good luck!");
+          navigate('/next-step');
+        } else {
+          alert("Question submitted, please wait for the next question");
+          setCurrentIndex((prevIndex) => (prevIndex + 1) % questions.length);
+          setExpressions([]);
+        }
       } else {
         alert("Error saving your answer. Please check your network and try again.");
       }
@@ -95,6 +106,9 @@ const Questions = () => {
           mediaRecorderRef.current = mediaRecorder;
           mediaRecorder.start();
           mediaRecorder.ondataavailable = handleDataAvailable;
+          
+          SpeechRecognition.startListening({ continuous: true });
+
         }
       })
       .catch(err => {

@@ -23,6 +23,7 @@ import Interviews from './interviews/Interviews';
 import InterviewStart from './interviews/InterviewStart';
 import Questions from './interviews/Questions';
 import AddQuestions from './interviews/AddQuestions';
+import NextStep from './interviews/NextStep';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -62,6 +63,7 @@ function App() {
           <Route path='/interview-start' element={<InterviewStart />} />
           <Route path='/interview-questions' element={<Questions />} />
           <Route path='/add-questions' element={<AddQuestions />} />
+          <Route path='/next-step' element={<NextStep />} />
         </Routes>
     </div>
   );

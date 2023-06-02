@@ -8,6 +8,7 @@ const Jobs = ({company, jobs}) => {
     const [applicantsCount, setApplicantsCount] = useState({});
     const [showApplicants, setShowApplicants] = useState({});
     const [selectedJobId, setSelectedJobId] = useState(null);
+    const [interviewedCandidates, setInterviewedCandidates] = useState({});
 
     const navigate = useNavigate();
     const addJob = (e) => {
@@ -15,11 +16,36 @@ const Jobs = ({company, jobs}) => {
         navigate('/add-job', {state: { company: company}});
     };
 
+    const groupResultsByUserId = (results) => {
+        const resultsArray = [];
+        results.forEach((result) => {
+          const { user_id } = result;
+          resultsArray.push(user_id);
+        });
+        const counter = Array.from(new Set(resultsArray));
+        return counter.length;
+    };   
+
     const addQuestions = (e, id, position) => {
         e.preventDefault();
         navigate('/add-questions', {state: { id: id, position: position}});
     };
 
+    //// start from here -- rejecting candidates
+    const rejectCandidate = async (e, candidateID, jobID, name, email, position, company) => {
+        e.preventDefault();
+        const data = {result: 'rejected', user_id: candidateID, job_id: jobID};
+        await axios.post('http://localhost:3000/api/v1/jobscreenings', data)
+        .then(() => {
+            sendRejectionEmail(name, email, position, company);
+            alert('Candidate rejected');
+        })
+        .catch(() => {
+            alert('Error rejecting candidate, please try again later');
+        });
+    };
+    /////////////////////////////
+    
     const fetchJobApplicants = async (jobId) => {
         try {
           const response = await axios.get(
@@ -48,13 +74,36 @@ const Jobs = ({company, jobs}) => {
         }
     };
 
+    const fetchInterviewedCandidates = async (jobId) => {
+        const data = {job_id: jobId};
+        try {
+            const response = await axios.get('http://localhost:3000/api/v1/save_expressions', {params: data});
+            if (response.data.success === true) {
+                setInterviewedCandidates((prevState) => ({
+                    ...prevState,
+                    [jobId]: response.data.job_results,
+                }));
+            } else {
+                setInterviewedCandidates((prevState) => ({
+                    ...prevState,
+                    [jobId]: [],
+                }));
+            }
+        } catch (error) {
+            setInterviewedCandidates((prevState) => ({
+                ...prevState,
+                [jobId]: [],
+            }));
+        }
+    };
+
     const shortlistedCandidatesPerJob = [];
     const fetchApplicantsPerJob = async (id) => {
         await axios
           .get(`http://localhost:3000/api/v1/jobscreenings/${id}/show_applicants_per_job`)
           .then((response) => {
             // shortlistedCandidatesPerJob.push({ jobId: response.data });
-            console.log({ jobId: response.data });
+            // console.log({ jobId: response.data });
           })
           .catch((error) => {
             console.log(`Error fetching shortlisted candidates: ${error}`);
@@ -66,6 +115,7 @@ const Jobs = ({company, jobs}) => {
           fetchJobApplicants(job.id);
           fetchAllpplicants(job.id);
           fetchApplicantsPerJob(job.id);
+          fetchInterviewedCandidates(job.id);
         });
     }, [jobs]);
 
@@ -124,8 +174,8 @@ const Jobs = ({company, jobs}) => {
            alert('Error shortlisting candidate, please try again later');
         }
       };
-      
-    return (
+
+      return (
         <div className="dashboard-content-biodata">
         <h1 className="biodata-title">Jobs Posted</h1>
         <table className="table-bio-data">
@@ -168,11 +218,16 @@ const Jobs = ({company, jobs}) => {
                                 </div>
                                     <div className="data-applicants">
                                         <h3 className="user-skills-header">Interviewed</h3>
-                                        <span>120</span>
+                                        <span>{interviewedCandidates[job.id] !== undefined ? groupResultsByUserId(interviewedCandidates[job.id]) : "...loading"}</span>
                                     </div>
                                     <div className="data-applicants">
-                                        <h3 className="user-skills-header">Successful</h3>
-                                        <span>20</span>
+                                        <h3 className="user-skills-header">Rankings</h3>
+                                        <button
+                                            onClick={() => openDialog(job.id)}
+                                            className='form-control-btn applicants-2'
+                                        >
+                                            View
+                                        </button>
                                     </div>
                                     <div className="data-applicants">
                                         <h3 className="user-skills-header">Rejected</h3>
@@ -252,7 +307,21 @@ const Jobs = ({company, jobs}) => {
                                         Shortlist
                                     </button>
                                 )}
-                                <button className="form-control-btn reject">Reject</button>
+                                <button 
+                                    className="form-control-btn reject"
+                                    onClick={
+                                        (event) => rejectCandidate(
+                                            event,
+                                            applicant.id,
+                                            selectedJobId,
+                                            applicant.name,
+                                            applicant.email,
+                                            jobs.jobs[selectedJobId - 1].position,
+                                            company.name
+                                    )}
+                                >
+                                        Reject
+                                </button>
                             </td>
                         </tr>
                         ))

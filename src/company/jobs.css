@@ -3,6 +3,11 @@
     background-color: green;
 }
 
+.applicants-2 {
+    width: 100px;
+    background-color: rgb(255, 176, 0);
+}
+
 .reject {
     width: 100px;
     background-color: red;
