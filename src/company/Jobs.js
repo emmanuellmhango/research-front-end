@@ -11,6 +11,7 @@ const Jobs = ({company, jobs}) => {
     const [interviewedCandidates, setInterviewedCandidates] = useState({});
 
     const navigate = useNavigate();
+
     const addJob = (e) => {
         e.preventDefault();
         navigate('/add-job', {state: { company: company}});
@@ -37,7 +38,7 @@ const Jobs = ({company, jobs}) => {
         const data = {result: 'rejected', user_id: candidateID, job_id: jobID};
         await axios.post('http://localhost:3000/api/v1/jobscreenings', data)
         .then(() => {
-            sendRejectionEmail(name, email, position, company);
+            // sendRejectionEmail(name, email, position, company);
             alert('Candidate rejected');
         })
         .catch(() => {
@@ -119,6 +120,10 @@ const Jobs = ({company, jobs}) => {
         });
     }, [jobs]);
 
+    const viewRankings = (e, jobId) => {
+        e.preventDefault();
+        navigate('/rankings', {state: { jobId: jobId, position: jobs.jobs[jobId - 1].position}});
+    };
 
     const openDialog = (jobId) => {
         setSelectedJobId(jobId);
@@ -223,7 +228,7 @@ const Jobs = ({company, jobs}) => {
                                     <div className="data-applicants">
                                         <h3 className="user-skills-header">Rankings</h3>
                                         <button
-                                            onClick={() => openDialog(job.id)}
+                                            onClick={(event) => viewRankings(event, job.id)}
                                             className='form-control-btn applicants-2'
                                         >
                                             View
