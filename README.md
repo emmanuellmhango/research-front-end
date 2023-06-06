@@ -21,7 +21,7 @@
 
 # 📖 [EMPLOYEE HIRING AND RECRUITEMENT APP] <a name="about-project"></a>
 
-**[EMPLOYEE HIRING AND RECRUITEMENT APP]** is a front-end app that tries to automate the employee hiring process. It Uses Face recognition and audio synthesis to get user input during the interview. this is in fulfilment of my Master of Computer Science research requirement. Please see the full [ABSTRACT HERE](https://emma-code.blogspot.com/p/research-abstract.html) to understand the research better. You can see the back-end repository [HERE](https://github.com/emmanuellmhango/research-back-end)
+**[EMPLOYEE HIRING AND RECRUITEMENT APP]** is a front-end app that tries to automate the employee hiring process. It Uses Face recognition and audio synthesis to get user input during the interview. this is in fulfillment of my Master of Computer Science research requirement. Please see the full [ABSTRACT HERE](https://emma-code.blogspot.com/p/research-abstract.html) to understand the research better. You can see the back-end repository [HERE](https://github.com/emmanuellmhango/research-back-end)
 
 ## 🛠 Built With <a name="built-with"></a>
 
@@ -36,7 +36,7 @@
 <details>
   <summary>API</summary>
   <ul>
-    <li><a href="[https://fakestoreapi.com/](https://github.com/emmanuellmhango/research-back-end)">BACK END</a></li>
+    <li><a href="https://github.com/emmanuellmhango/research-back-end">BACK END</a></li>
   </ul>
 </details>
 <details>
