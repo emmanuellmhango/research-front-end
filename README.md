@@ -1,4 +1,7 @@
-# 📗 Table of Contents
+
+# 📖 EMPLOYEE HIRING AND RECRUITEMENT APP <a name="about-project">(FRONT-END)</a>
+
+## 📗 Table of Contents
 
 - [📖 About the Project](#about-project)
   - [🛠 Built With](#built-with)
@@ -18,8 +21,6 @@
 - [⭐️ Show your support](#support)
 - [🙏 Acknowledgements](#acknowledgements)
 - [📝 License](#license)
-
-# 📖 [EMPLOYEE HIRING AND RECRUITEMENT APP] <a name="about-project"></a>
 
 **[EMPLOYEE HIRING AND RECRUITEMENT APP]** is a front-end app that tries to automate the employee hiring process. It Uses Face recognition and audio synthesis to get user input during the interview. this is in fulfillment of my Master of Computer Science research requirement. Please see the full [ABSTRACT HERE](https://emma-code.blogspot.com/p/research-abstract.html) to understand the research better. You can see the back-end repository [HERE](https://github.com/emmanuellmhango/research-back-end)
 
