@@ -10,3 +10,13 @@
     border-collapse: collapse;
     margin: 0 auto;
 }
+
+.table-statistics {
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+}
+
+.link {
+    text-decoration: none;
+}

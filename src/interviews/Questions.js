@@ -53,7 +53,7 @@ const Questions = () => {
         voice_text: audioText,
         job_id: job_id,
         user_id: user.id,
-        question_id: questions[currentIndex].id
+        save_question_id: questions[currentIndex].id
       });
       
       if (saveExpressions.statusText === 'Created') {
@@ -143,6 +143,7 @@ const Questions = () => {
       mediaRecorder.stop();
       setCaptureVideo(false);
     }
+    mediaRecorder.stop();
   };  
 
   const handleVideoOnPlay = () => {
@@ -189,8 +190,6 @@ const Questions = () => {
       }
     };
   }, [currentIndex]);
-
-  console.log(questions);
 
   if (!questions || questions.length === 0) {
     return <div>Loading...</div>;
