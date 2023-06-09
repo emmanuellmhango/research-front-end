@@ -116,7 +116,6 @@ const InterviewRankings = () => {
         const cwords = words.filter((word) => answerWords.includes(word));
         const commonWords = [...new Set(cwords)];
         const matchPercentage = (commonWords.length / answerWords.length) * 100;
-        console.log(`commonWords: ${commonWords}, answerWords: ${answerWords}, %:${matchPercentage}`);
         return matchPercentage.toFixed(1);
     };
 
