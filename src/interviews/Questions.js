@@ -21,7 +21,6 @@ const Questions = () => {
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [captureVideo, setCaptureVideo] = useState(false);
   const [expressions, setExpressions] = useState([]);
-  const [recording, setRecording] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
   const mediaRecorderRef = useRef(null);  
 
@@ -53,7 +52,8 @@ const Questions = () => {
         video_feed: recordedBlob,
         voice_text: audioText,
         job_id: job_id,
-        user_id: user.id
+        user_id: user.id,
+        save_question_id: questions[currentIndex].id
       });
       
       if (saveExpressions.statusText === 'Created') {
@@ -143,6 +143,7 @@ const Questions = () => {
       mediaRecorder.stop();
       setCaptureVideo(false);
     }
+    mediaRecorder.stop();
   };  
 
   const handleVideoOnPlay = () => {
