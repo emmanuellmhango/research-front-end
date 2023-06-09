@@ -8,8 +8,10 @@ const InterviewRankings = () => {
     const [interviewedCandidates, setInterviewedCandidates] = useState([]);
     const [applicants, setApplicants] = useState([]);
     const [dataFetched, setDataFetched] = useState(false);
+    const [showApplicants, setShowApplicants] = useState([]);
     const jobId = location.state.jobId;
     const position = location.state.position;
+    const neededJobSkills = location.state.neededJobSkills;
     const [questions, setQuestions] = useState([]);
 
     const fetchJobQuestions = async () => {
@@ -69,8 +71,7 @@ const InterviewRankings = () => {
         const expressions = data.split(',').map(expression => expression.trim());
         const expressionCount = expressions.length;
         const expressionCounts = {};
-      
-        // Count the occurrences of each expression
+        const expressionPercentages = {};
         for (let i = 0; i < expressionCount; i++) {
           const expression = expressions[i];
           if (expressionCounts.hasOwnProperty(expression)) {
@@ -79,9 +80,6 @@ const InterviewRankings = () => {
             expressionCounts[expression] = 1;
           }
         }
-      
-        // Calculate the percentage for each expression
-        const expressionPercentages = {};
         for (const expression in expressionCounts) {
           const count = expressionCounts[expression];
           let percentage = (count / expressionCount) * 100;
@@ -94,17 +92,31 @@ const InterviewRankings = () => {
         return Object.entries(expressionPercentages).map(([key, value]) => `${key}: ${value}`).join(', ');
     };
 
+    const maxExpression = (expressions) => {
+        const data = expressions.split(',').map(expression => expression.trim());
+        const convertedData = data.reduce((result, item) => {
+          const [key, value] = item.split(':').map(str => str.trim());
+          result[key] = parseFloat(value);
+          return result;
+        }, {});
+      
+        const sortedData = Object.entries(convertedData)
+          .sort((a, b) => b[1] - a[1])
+          .reduce((result, [key, value]) => {
+            result.push({ key, value });
+            return result;
+          }, []);
+      
+        return sortedData;
+    };
+
     const speechAccuracy = (speech, answer) => {
         const words = speech.split(',').map(word => word.trim());
         const answerWords = answer.split(',').map(word => word.trim());
-        
-        // check how many candidate words match the question's required answer words
-        const commonWords = words.filter((word) => answerWords.includes(word));
-
-        // calculate matching percentage
+        const cwords = words.filter((word) => answerWords.includes(word));
+        const commonWords = [...new Set(cwords)];
         const matchPercentage = (commonWords.length / answerWords.length) * 100;
-        // return the percentage of the match
-        
+        console.log(`commonWords: ${commonWords}, answerWords: ${answerWords}, %:${matchPercentage}`);
         return matchPercentage.toFixed(1);
     };
 
@@ -118,9 +130,76 @@ const InterviewRankings = () => {
         return question ? question.answer : '';
     };
 
-    const overallResultPerQuestion = (expressions, speechAccuracy) => {
-        const expressionsArray = expressions.split(',').map(expression => expression.trim());
-        console.log(expressionsArray);
+    const overallResultPerQuestion = (expressions, speechAccuracy, numberOfQuestions) => {
+        const expressionValue = expressions[0].value;
+        const total = parseFloat(expressionValue) + parseFloat(speechAccuracy);
+        // const questionContribution = 100 / numberOfQuestions;
+        // const questionAnswerContribution = total/100;
+        // const questionContributionPerc = questionContribution/100;
+        const contribution = Math.round(total);
+        return contribution;
+    };
+
+    
+    const countQuestions = () => {
+        const questionCountBySaveId = [];
+        interviewedCandidates.forEach(entry => {
+          const saveQuestionId = entry.expressions.save_question_id;
+          if (!questionCountBySaveId.includes(saveQuestionId)) {
+           questionCountBySaveId.push(saveQuestionId);
+          }
+        });
+        return questionCountBySaveId.length;
+    };
+
+    const totalOverall = () => {
+        const contrib = document.getElementsByClassName('contributionsTotal');
+        let total = 0;
+        for (let i = 0; i < contrib.length; i++) {
+            total += parseFloat(contrib[i].innerHTML);
+        }
+        return Math.ceil(total);
+    }
+
+    const sortRankings = () => {
+        const table = document.getElementById('data-table');
+        if (table && table.tBodies.length > 0) {
+            const rows = table.tBodies[0].rows;
+            const rowsArray = Array.from(rows);
+            rowsArray.sort((a, b) => {
+                const rankA = parseInt(a.cells[3].textContent);
+                const rankB = parseInt(b.cells[3].textContent);
+                return rankA - rankB;
+            });
+            for (let i = 0; i < rowsArray.length; i++) {
+                table.tBodies[0].appendChild(rowsArray[i]);
+            }
+        }
+    };
+
+    const fetchAllpplicants = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/api/v1/jobs/${jobId}/show_applicants`
+          );
+          setShowApplicants(response.data.users);
+        } catch (error) {
+          console.log(error);
+        }
+    };
+
+    const candidateMatch = (id) => {
+        let applicantSkills = "";
+        showApplicants.forEach((applicant) => {
+            if (applicant.id === id) {
+                applicantSkills = applicant.skills;
+            }
+        });
+        const neededJobSkillsArray = neededJobSkills.split(",").map((skill) => skill.trim());
+        const applicantSkillsArray = applicantSkills.split(",").map((skill) => skill.trim());
+        const commonSkills = neededJobSkillsArray.filter((skill) => applicantSkillsArray.includes(skill));
+        const matchPercentage = Math.round((commonSkills.length / neededJobSkillsArray.length) * 100);
+        return matchPercentage;
     };
 
     useEffect(() => {
@@ -134,33 +213,50 @@ const InterviewRankings = () => {
     useEffect(() => {
         groupResultsByUser(interviewedCandidates);
         fetchJobQuestions();
+        sortRankings();
+        fetchAllpplicants();
     }, [interviewedCandidates]);
 
-    console.log(questions);
     return (
         <div className="rankings">
             <br /><br /><br />
             <h2>Interview Rankings</h2>
             <h4>Position: {position} </h4>
             {applicants && applicants.length > 0 ? (
-                <table className="table-rankings">
+                <table className="table-rankings" id="data-table">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Bio Details</th>
                             <th>Question Summaries</th>
+                            <th className="right coloring">Overall</th>
                         </tr>
                     </thead>
                     <tbody>
                         {applicants.map((applicant, i) =>
                                 <tr key={i} className="applicant">
-                                    <td valign="top" width="5%">{i + 1}</td>
-                                    <td  valign="top" width="25%">
-                                        {applicant.first_name} {applicant.last_name} <br />
-                                        {applicant.email} <br />
-                                        {applicant.phone}
+                                    <td width="5%">{i + 1}</td>
+                                    <td width="20%">
+                                        <table className="table-bios">
+                                            <thead>
+                                                <th>Applicant</th>
+                                                <th className="emphasis">Skills Match</th>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        {applicant.first_name} {applicant.last_name} <br />
+                                                        {applicant.email} <br />
+                                                        {applicant.phone}
+                                                    </td>
+                                                    <td className="emphasis">
+                                                        <span className="contributionsTotal">{candidateMatch(applicant.id)}</span> %
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </td>
-                                    <td width="70%">
+                                    <td width="65%">
                                         {interviewedCandidates.map((candidate, j) => {
                                             if (candidate.expressions.user_id === applicant.id) {
                                                 return (
@@ -179,8 +275,10 @@ const InterviewRankings = () => {
                                                                     {speechAccuracy(candidate.expressions.voice_text, getAnswer(candidate.expressions.save_question_id))} %
                                                                 </td>
                                                                 <td>
-                                                                    Overall <br />
-                                                                    {overallResultPerQuestion(overallExpressions(candidate.expressions.expressions), speechAccuracy(candidate.expressions.voice_text, getAnswer(candidate.expressions.save_question_id)))}
+                                                                    <b>Total</b><br />
+                                                                    <span className="contributionsTotal">
+                                                                        {overallResultPerQuestion(maxExpression(overallExpressions(candidate.expressions.expressions)), speechAccuracy(candidate.expressions.voice_text, getAnswer(candidate.expressions.save_question_id)), countQuestions())}
+                                                                    </span>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -189,6 +287,9 @@ const InterviewRankings = () => {
                                             }
                                         }
                                         )}
+                                    </td>
+                                    <td className="right coloring">
+                                        {totalOverall()}
                                     </td>
                                 </tr>
                             )

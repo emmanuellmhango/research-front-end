@@ -122,9 +122,9 @@ const Jobs = ({company, jobs}) => {
 
     const viewRankings = (e, jobId) => {
         e.preventDefault();
-        navigate('/rankings', {state: { jobId: jobId, position: jobs.jobs[jobId - 1].position}});
+        navigate('/rankings', {state: { jobId: jobId, position: jobs.jobs[jobId - 1].position, neededJobSkills: jobs.jobs[jobId - 1].needed_skills}});
     };
-
+    console.log(jobs.jobs); /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     const openDialog = (jobId) => {
         setSelectedJobId(jobId);
     };
