@@ -1,0 +1,34 @@
+.signup-container {
+    margin-top: -50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    width: 100%;
+    background-color: #f5f5f5;
+  }
+  
+  .form-control-l {
+    border-radius: 15px;
+    width: 400px;
+    border: 1px solid rgb(108,151,229);
+    padding: 0 5px;
+    height: 30px;
+    margin-bottom: 5px;
+  }
+
+  .form-control-btn {
+    width: 150px;
+    height: 30px;
+    margin-bottom: 5px;
+    background-color: rgb(255, 176, 0);
+    border-radius: 15px;
+    border: none;
+    color: #fff;
+  }
+
+  .form-control-btn:hover {
+    cursor: pointer;
+    margin: 5px;
+  }

@@ -1,4 +1,3 @@
-
 # 📖 EMPLOYEE HIRING AND RECRUITEMENT APP <a name="about-project">(FRONT-END)</a>
 
 ## 📗 Table of Contents
@@ -140,3 +139,4 @@ Feel free to check the [issues page](../../issues/).
 If you like this project give a star.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
