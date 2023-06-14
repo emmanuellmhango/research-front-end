@@ -46,7 +46,7 @@ const BasicData = ({biodata, user}) => {
                     <td className="data-width">
                         <div className="data">
                             <span className="bio-title"> LOCATION </span>
-                            <span className="data-details">{ biodata && biodata.location === undefined ? biodata.location : 'null' }</span>
+                            <span className="data-details">{ biodata && biodata.location !== undefined ? biodata.location : 'null' }</span>
                         </div>
                     </td>    
                     <td className="data-width">

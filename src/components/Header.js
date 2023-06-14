@@ -98,6 +98,9 @@ const Header = ({handleLogout}) => {
                   <li className="nav-item">
                     <NavLink to="/login" className="link">Account</NavLink>
                   </li>
+                  <li className="nav-item">
+                    <NavLink to="http://127.0.0.1:5000/" className="link" rel="noopener noreferrer">Face-Login</NavLink>
+                  </li>
               </ul>
             </div>
             <div className="nav-search">

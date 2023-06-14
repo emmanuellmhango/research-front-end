@@ -8,6 +8,17 @@
     width: 100%;
     background-color: #f5f5f5;
   }
+
+  .account {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
   
   .form-control-l {
     border-radius: 15px;
@@ -16,6 +27,18 @@
     padding: 0 5px;
     height: 30px;
     margin-bottom: 5px;
+  }
+
+  .form-control-l-vid {
+    border-radius: 15px;
+    width: 640px;
+    padding: 0 5px;
+    height: 480px;
+    margin-bottom: 5px;
+  }
+
+  .form-control-l-vid-canv {
+    display: none;
   }
 
   .form-control-btn {
