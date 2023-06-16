@@ -11,6 +11,7 @@ function CandidateLogin({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [storedUserData, setStoredUserData] = useState([]);
+  const [capturedImage, setCapturedImage] = useState(null);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -27,12 +28,17 @@ function CandidateLogin({ onLogin }) {
   const fetchStoredUserData = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/v1/get_images');
-      const users = response.data;
-      setStoredUserData(users);
+      const { success, user } = response.data;
+      if (success) {
+        setStoredUserData(user);
+      } else {
+        console.log('Error fetching user data');
+      }
     } catch (error) {
       console.error('Error fetching stored user data:', error);
     }
   };
+  
   
   useEffect(() => {
     fetchStoredUserData();
@@ -61,90 +67,45 @@ function CandidateLogin({ onLogin }) {
   };
 
   useEffect(() => {
-    let videoStream = null;
-
-    const loadModels = async () => {
-      await Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
-        faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
-        faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
-        faceapi.nets.faceExpressionNet.loadFromUri('/models'),
-      ]);
-    };
-
-    const startVideo = () => {
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then((stream) => {
-          videoRef.current.srcObject = stream;
-          videoStream = stream;
-        })
-        .catch((error) => {
-          console.error('Error accessing webcam:', error);
-        });
-    };
-
-    const recognizeFace = async () => {
-      const videoElement = videoRef.current;
-      const canvasElement = canvasRef.current;
-      let displaySize = { width: 0, height: 0 };
-    
-      videoElement.addEventListener('loadeddata', () => {
-        displaySize = { width: videoElement.videoWidth, height: videoElement.videoHeight };
-        faceapi.matchDimensions(canvasElement, displaySize);
-      });
-    
-      setInterval(async () => {
-        const detections = await faceapi
-          .detectAllFaces(videoElement, new faceapi.TinyFaceDetectorOptions())
-          .withFaceLandmarks()
-          .withFaceDescriptors()
-          .withFaceExpressions();
-    
-        const resizedDetections = faceapi.resizeResults(detections, displaySize);
-        const canvasContext = canvasElement.getContext('2d');
-        canvasContext.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        faceapi.draw.drawDetections(canvasElement, resizedDetections);
-        faceapi.draw.drawFaceLandmarks(canvasElement, resizedDetections);
-        faceapi.draw.drawFaceExpressions(canvasElement, resizedDetections);
-    
-        // Perform your desired actions based on face recognition results
-        if (detections.length > 0) {
-          console.log('Face recognized!');
-          handleFaceLogin(storedUserData);
-        }
-      }, 100);
-    };        
-
-    loadModels()
-      .then(() => startVideo())
-      .then(() => recognizeFace());
-
-    return () => {
-      // Clean up resources when component unmounts
-      if (videoStream) {
-        videoStream.getTracks().forEach((track) => track.stop());
+    const initWebcam = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videoRef.current.srcObject = stream;
+      } catch (error) {
+        console.error('Error accessing webcam:', error);
       }
     };
+
+    initWebcam();
   }, []);
 
-  const handleFaceLogin = (users) => {
+  const captureFace = () => {
+    const videoElement = videoRef.current;
     const canvasElement = canvasRef.current;
-    const faceImage = canvasElement.toDataURL();
-    
-    // Compare the recognized face with each stored face image
+    const context = canvasElement.getContext('2d');
+
+    context.drawImage(
+      videoElement,
+      0,
+      0,
+      canvasElement.width,
+      canvasElement.height
+    );
+
+    const imageDataUrl = canvasElement.toDataURL();
+    setCapturedImage(imageDataUrl);
+  };
+
+  const handleFaceLogin = (e) => {
+    e.preventDefault();
+    const faceImage = capturedImage;
     let isMatched = false;
-    for (const user of users) {
-      const storedFaceImage = user.image_data;
-  
-      // Compare the stored face image with the recognized face
-      if (faceImage === storedFaceImage) {
-        console.log('Matched');
-        isMatched = true;
-        break;
-      }
+    const storedFaceImage = storedUserData.map((user) => user.image_data);
+    if (storedFaceImage.includes(faceImage)) {
+      console.log('Matched');
+      isMatched = true;
     }
-  
+    
     if (!isMatched) {
       console.log('Not matched');
     }
@@ -160,9 +121,27 @@ function CandidateLogin({ onLogin }) {
           <h1> Login as Candidate</h1>
           <h3>Login with Face</h3>
           <form>
-            <div className='form-group'>
-              <video ref={videoRef} className='form-control-l-vid' autoPlay></video> <br />
-              <canvas ref={canvasRef} className='form-control-l-vid-canv'></canvas> <br />
+          <div className="form-group">
+              <label>Capture your Face</label> <br />
+                {capturedImage ? (
+                  <>
+                    <img
+                      src={capturedImage}
+                      alt="Captured Face"
+                      className="form-control-l-vid"
+                    />
+                    <input type="hidden" name="image_data" value={capturedImage} /> <br />
+                    <button onClick={handleFaceLogin} className="form-control-btn">Login with Face</button>
+                  </>
+                ) :
+                (
+                  <>
+                    <video ref={videoRef} className="form-control-l-vid" autoPlay></video> <br />
+                    <canvas ref={canvasRef} width="640" height="480" className="form-control-l-vid-canv"></canvas> <br />
+                    <button onClick={captureFace} className="form-control-btn">Capture Face</button>
+                  </>
+                )
+                }              
             </div>
           </form>
           <h2>OR</h2>
